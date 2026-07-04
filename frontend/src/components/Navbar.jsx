@@ -1,12 +1,11 @@
 import { Link } from 'react-router-dom';
-import { isAuthenticated, getCurrentUser, logout } from '../services/authService';
-import './Navbar.css';
+import authService from '../services/authService';
 
 export default function Navbar() {
-  const user = getCurrentUser();
+  const user = authService.getCurrentUser();
 
   const handleLogout = () => {
-    logout();
+    authService.logout();
     window.location.href = '/login';
   };
 
@@ -16,9 +15,9 @@ export default function Navbar() {
         <Link to="/dashboard">📝 Notes Manager</Link>
       </div>
       <div className="navbar-menu">
-        {isAuthenticated() ? (
+        {authService.isAuthenticated() ? (
           <>
-            <span className="navbar-user">Welcome, {user.username}</span>
+            <span className="navbar-user">Welcome, {user?.username}</span>
             <button onClick={handleLogout} className="btn btn-secondary btn-sm">Logout</button>
           </>
         ) : (

@@ -1,12 +1,6 @@
 package com.notesmanager.config;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +8,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.security.Key;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
@@ -39,17 +34,23 @@ public class JwtUtils {
     }
 
     public String getUserNameFromJwtToken(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(key())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-        return claims.getSubject();
+        try {
+            return Jwts.parser()
+                    .setSigningKey(key())
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getSubject();
+        } catch (Exception e) {
+            log.error("Cannot parse JWT token: {}", e.getMessage());
+            throw new RuntimeException("Invalid JWT token");
+        }
     }
 
     public boolean validateJwtToken(String authToken) {
         try {
-            Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(authToken);
+            Jwts.parser()
+                .setSigningKey(key())
+                .parseClaimsJws(authToken);
             return true;
         } catch (MalformedJwtException e) {
             log.error("Invalid JWT token: {}", e.getMessage());
@@ -63,7 +64,8 @@ public class JwtUtils {
         return false;
     }
 
-    private Key key() {
-        return Keys.hmacShaKeyFor(jwtSecret.getBytes());
+    private SecretKeySpec key() {
+        byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
+        return new SecretKeySpec(keyBytes, "HmacSHA256");
     }
 }

@@ -1,6 +1,6 @@
 package com.notesmanager.config;
 
-import com.notesmanager.service.UserDetailsServiceImpl;
+import com.notesmanager.service.impl.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

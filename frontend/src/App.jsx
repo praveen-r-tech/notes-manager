@@ -14,11 +14,11 @@ import ArchivedNotes from './pages/ArchivedNotes';
 import SearchResults from './pages/SearchResults';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import { isAuthenticated } from './services/authService';
+import authService from './services/authService';
 import './styles/index.css';
 
 function ProtectedRoute({ children }) {
-  if (!isAuthenticated()) {
+  if (!authService.isAuthenticated()) {
     return <Navigate to="/login" replace />;
   }
   return children;
