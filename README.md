@@ -165,35 +165,6 @@ docker-compose up --build
 | GET | `/api/files/{id}/download` | Download file |
 | DELETE | `/api/files/{id}` | Delete file |
 
-## 🚀 Deployment
-
-### Frontend (Vercel)
-
-1. Push code to GitHub
-2. Import repository in Vercel
-3. Set environment variable: `VITE_API_BASE_URL=https://your-backend.onrender.com`
-4. Deploy
-
-### Backend (Render)
-
-1. Create a new Web Service on Render
-2. Connect your GitHub repository
-3. Configure:
-   - **Runtime**: Java 21
-   - **Build Command**: `mvn clean package -DskipTests`
-   - **Start Command**: `java -jar target/notes-manager-backend-1.0.0.jar`
-4. Add environment variables:
-   - `MONGODB_URI`: Your MongoDB Atlas connection string
-   - `ALLOWED_ORIGINS`: Your Vercel frontend URL
-5. Deploy
-
-### Database (MongoDB Atlas)
-
-1. Create a free cluster
-2. Configure network access (allow all IPs for Render)
-3. Create a database user
-4. Get connection string
-
 ## 📸 Screenshots
 
 *Add screenshots here after deployment*
