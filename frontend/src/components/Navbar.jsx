@@ -1,31 +1,33 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { isAuthenticated, getCurrentUser, logout } from '../services/authService';
+import './Navbar.css';
 
 export default function Navbar() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const navigate = useNavigate();
+  const user = getCurrentUser();
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
-    }
+  const handleLogout = () => {
+    logout();
+    window.location.href = '/login';
   };
 
   return (
     <nav className="navbar">
-      <div className="navbar-brand">📝 NotesManager</div>
-      <form className="search-bar" onSubmit={handleSearch}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
-        </svg>
-        <input
-          type="text"
-          placeholder="Search notes..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-      </form>
+      <div className="navbar-brand">
+        <Link to="/dashboard">📝 Notes Manager</Link>
+      </div>
+      <div className="navbar-menu">
+        {isAuthenticated() ? (
+          <>
+            <span className="navbar-user">Welcome, {user.username}</span>
+            <button onClick={handleLogout} className="btn btn-secondary btn-sm">Logout</button>
+          </>
+        ) : (
+          <>
+            <Link to="/login" className="btn btn-secondary btn-sm">Login</Link>
+            <Link to="/register" className="btn btn-primary btn-sm">Register</Link>
+          </>
+        )}
+      </div>
     </nav>
   );
 }
