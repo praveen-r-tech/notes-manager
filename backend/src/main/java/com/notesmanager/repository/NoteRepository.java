@@ -5,7 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -14,7 +13,6 @@ import java.util.List;
  * Provides CRUD operations and custom query methods for MongoDB.
  * Uses Spring Data MongoDB's derived query methods and custom @Query annotations.
  */
-@Repository
 public interface NoteRepository extends MongoRepository<Note, String> {
 
     Page<Note> findByArchivedFalse(Pageable pageable);

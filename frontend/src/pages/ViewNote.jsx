@@ -4,8 +4,6 @@ import { useNotes } from '../context/NoteContext';
 import { useToast } from '../context/ToastContext';
 import NoteService from '../services/noteService';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
-
 export default function ViewNote() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -48,7 +46,11 @@ export default function ViewNote() {
       const res = await NoteService.uploadAttachment(id, file);
       setNote(res.data);
       toast.success('File uploaded');
-    } catch { toast.error('Failed to upload file'); }
+    } catch (err) {
+      console.error('Upload error:', err.response?.status, err.response?.data || err.message);
+      const msg = err.response?.data?.message || err.message || 'Failed to upload file';
+      toast.error(msg);
+    }
   };
 
   const handleDeleteAttachment = async () => {
@@ -90,7 +92,7 @@ export default function ViewNote() {
             <div className="attachment-size">{formatSize(note.attachmentSize)}</div>
           </div>
           <div className="attachment-actions">
-            <a href={`${API_BASE_URL}/api/files/${note.attachmentId}/download`} className="btn btn-secondary btn-sm" download>Download</a>
+          <a href={`/api/files/${note.attachmentId}/download`} className="btn btn-secondary btn-sm" download>Download</a>
             <button className="btn btn-danger btn-sm" onClick={handleDeleteAttachment}>Remove</button>
           </div>
         </div>

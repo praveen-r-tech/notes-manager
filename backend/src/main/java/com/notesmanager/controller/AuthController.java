@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "${ALLOWED_ORIGINS:http://localhost:3000}")
@@ -30,5 +32,14 @@ public class AuthController {
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         AuthResponse response = userService.login(request);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/check-email")
+    public ResponseEntity<Map<String, Boolean>> checkEmail(@RequestParam String email) {
+        boolean exists = userService.emailExists(email);
+        if (exists) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("exists", true));
+        }
+        return ResponseEntity.ok(Map.of("exists", false));
     }
 }

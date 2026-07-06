@@ -2,12 +2,12 @@ import axios from './api';
 
 const authService = {
   register: async (userData) => {
-    const response = await axios.post('/api/auth/register', userData);
+    const response = await axios.post('/auth/register', userData);
     return response.data;
   },
 
   login: async (credentials) => {
-    const response = await axios.post('/api/auth/login', credentials);
+    const response = await axios.post('/auth/login', credentials);
     return response.data;
   },
 

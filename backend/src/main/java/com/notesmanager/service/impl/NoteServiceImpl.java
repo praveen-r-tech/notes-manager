@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -73,6 +74,7 @@ public class NoteServiceImpl implements NoteService {
     }
 
     @Override
+    @SuppressWarnings("null")
     public NoteResponse updateNote(String id, NoteRequest request) {
         log.info("Updating note with id: {}", id);
         Note note = findNoteById(id);
@@ -206,7 +208,12 @@ public class NoteServiceImpl implements NoteService {
         }
     }
 
+    @SuppressWarnings("null")
+    @NonNull
     private Note findNoteById(String id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Note ID cannot be null");
+        }
         return noteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Note", id));
     }

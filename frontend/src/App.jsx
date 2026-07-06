@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from 'react-router-dom';
 import { ToastProvider } from './context/ToastContext';
 import { NoteProvider } from './context/NoteContext';
 import Navbar from './components/Navbar';
@@ -17,6 +17,14 @@ import Register from './pages/Register';
 import authService from './services/authService';
 import './styles/index.css';
 
+// Clear old invalid tokens from before the JWT fix
+// Old fake tokens were MongoDB ObjectIds (no dots), real JWTs have 2 dots
+const storedToken = localStorage.getItem('token');
+if (storedToken && !storedToken.includes('.')) {
+  localStorage.removeItem('token');
+  localStorage.removeItem('username');
+}
+
 function ProtectedRoute({ children }) {
   if (!authService.isAuthenticated()) {
     return <Navigate to="/login" replace />;
@@ -33,7 +41,7 @@ function App() {
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              <Route path="/" element={<ProtectedRoute><><Navbar /><Sidebar /></></ProtectedRoute>}>
+               <Route path="/" element={<ProtectedRoute><Navbar /><Sidebar /><main className="main-content"><Outlet /></main></ProtectedRoute>}>
                 <Route index element={<Navigate to="/dashboard" replace />} />
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="notes" element={<AllNotes />} />

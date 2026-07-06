@@ -3,6 +3,7 @@ package com.notesmanager.mapper;
 import com.notesmanager.dto.NoteRequest;
 import com.notesmanager.dto.NoteResponse;
 import com.notesmanager.entity.Note;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -21,12 +22,12 @@ public class NoteMapper {
         return new NoteResponse(note.getId(), note.getTitle(), note.getContent(), note.getTags() != null ? note.getTags() : Collections.emptyList(), note.isPinned(), note.isArchived(), note.getAttachmentName(), note.getAttachmentType(), note.getAttachmentSize(), note.getAttachmentId(), note.getCreatedAt(), note.getUpdatedAt());
     }
 
+    @NonNull
     public Note toEntity(NoteRequest request) {
-        if (request == null) return null;
         Note note = new Note();
-        note.setTitle(request.getTitle());
-        note.setContent(request.getContent());
-        note.setTags(request.getTags() != null ? request.getTags() : Collections.emptyList());
+        note.setTitle(request != null ? request.getTitle() : null);
+        note.setContent(request != null ? request.getContent() : null);
+        note.setTags(request != null && request.getTags() != null ? request.getTags() : Collections.emptyList());
         note.setPinned(false);
         note.setArchived(false);
         note.setCreatedAt(LocalDateTime.now());
@@ -34,8 +35,8 @@ public class NoteMapper {
         return note;
     }
 
-    public void updateEntity(Note note, NoteRequest request) {
-        if (request == null || note == null) {
+    public void updateEntity(@NonNull Note note, NoteRequest request) {
+        if (note == null || request == null) {
             return;
         }
 

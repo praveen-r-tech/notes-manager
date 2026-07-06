@@ -55,8 +55,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<ErrorResponse> handleMaxSize(MaxUploadSizeExceededException ex) {
         log.error("File size exceeded: {}", ex.getMessage());
-        ErrorResponse error = new ErrorResponse(HttpStatus.PAYLOAD_TOO_LARGE.value(), "File size exceeds maximum allowed size of 20MB", LocalDateTime.now(), null);
-        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(error);
+        ErrorResponse error = new ErrorResponse(413, "File size exceeds maximum allowed size of 20MB", LocalDateTime.now(), null);
+        return ResponseEntity.status(413).body(error);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

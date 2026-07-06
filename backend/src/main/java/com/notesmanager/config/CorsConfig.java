@@ -1,6 +1,6 @@
 package com.notesmanager.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -16,10 +16,13 @@ import java.util.List;
  * In development, allows localhost:5173 (Vite default port).
  */
 @Configuration
+@ConfigurationProperties(prefix = "app.cors")
 public class CorsConfig {
 
-    @Value("${app.cors.allowed-origins}")
-    private String allowedOrigins;
+    /**
+     * Comma-separated list of allowed origins for CORS.
+     */
+    private String allowedOrigins = "http://localhost:5173,http://localhost:3000,http://localhost:3001";
 
     @Bean
     public CorsFilter corsFilter() {
@@ -36,5 +39,13 @@ public class CorsConfig {
         source.registerCorsConfiguration("/api/**", config);
 
         return new CorsFilter(source);
+    }
+
+    public String getAllowedOrigins() {
+        return allowedOrigins;
+    }
+
+    public void setAllowedOrigins(String allowedOrigins) {
+        this.allowedOrigins = allowedOrigins;
     }
 }

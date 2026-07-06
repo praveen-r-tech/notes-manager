@@ -7,4 +7,5 @@ import com.notesmanager.dto.RegisterRequest;
 public interface UserService {
     AuthResponse register(RegisterRequest request);
     AuthResponse login(LoginRequest request);
+    boolean emailExists(String email);
 }

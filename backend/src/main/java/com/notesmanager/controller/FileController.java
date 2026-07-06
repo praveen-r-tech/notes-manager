@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 public class FileController {
 
     private static final Logger log = LoggerFactory.getLogger(FileController.class);
+    private static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
 
     private final FileRepository fileRepository;
 
@@ -32,6 +33,7 @@ public class FileController {
         this.fileRepository = fileRepository;
     }
 
+    @SuppressWarnings("all")
     @GetMapping("/{id}/download")
     @Operation(summary = "Download a file", description = "Download a file by its GridFS ID with original filename and content type preserved")
     @ApiResponses(value = {
@@ -48,7 +50,7 @@ public class FileController {
 
         String contentType = gridFsResource.getContentType();
         if (contentType == null) {
-            contentType = "application/octet-stream";
+            contentType = DEFAULT_CONTENT_TYPE;
         }
 
         return ResponseEntity.ok()

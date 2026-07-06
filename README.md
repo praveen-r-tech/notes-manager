@@ -165,13 +165,79 @@ docker-compose up --build
 | GET | `/api/files/{id}/download` | Download file |
 | DELETE | `/api/files/{id}` | Delete file |
 
-## 📸 Screenshots
+## 🚢 Production Deployment
 
-*Add screenshots here after deployment*
+### Prerequisites
+- GitHub repository
+- Vercel account (for frontend)
+- Render account (for backend)
+- MongoDB Atlas cluster
+
+### Step 1: MongoDB Atlas Setup
+
+1. Create a free cluster at [MongoDB Atlas](https://www.mongodb.com/atlas)
+2. Create a database user with read/write permissions
+3. Whitelist all IP addresses (`0.0.0.0/0`) or your Render IP
+4. Get your connection string:
+   ```
+   mongodb+srv://<username>:<password>@<cluster-url>/notesmanager?retryWrites=true&w=majority
+   ```
+
+### Step 2: Backend Deployment (Render)
+
+1. Go to [Render](https://render.com) and create a new **Web Service**
+2. Connect your GitHub repository
+3. Configure the service:
+   - **Name**: `notes-manager-backend`
+   - **Environment**: Docker
+   - **Branch**: main
+   - **Build Command**: `mvn clean package -DskipTests`
+   - **Start Command**: `java -jar target/*.jar`
+4. Set environment variables:
+   ```
+   MONGODB_URI=<your-atlas-connection-string>
+   JWT_SECRET=<strong-random-secret-min-32-chars>
+   JWT_EXPIRATION=86400000
+   ALLOWED_ORIGINS=https://your-app.vercel.app
+   SERVER_PORT=8080
+   ```
+5. Deploy the service
+6. Copy your Render backend URL (e.g., `https://notes-manager-backend.onrender.com`)
+
+### Step 3: Frontend Deployment (Vercel)
+
+1. Go to [Vercel](https://vercel.com) and create a new project
+2. Import your GitHub repository
+3. Configure the project:
+   - **Framework Preset**: Vite
+   - **Root Directory**: `frontend`
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+4. Set environment variables:
+   ```
+   VITE_API_BASE_URL=https://notes-manager-backend.onrender.com
+   ```
+5. Deploy the project
+6. Copy your Vercel frontend URL (e.g., `https://notes-manager.vercel.app`)
+
+### Step 4: Update CORS
+
+1. Go back to your **Render** backend service
+2. Update the `ALLOWED_ORIGINS` environment variable to include your Vercel URL:
+   ```
+   ALLOWED_ORIGINS=https://your-app.vercel.app,http://localhost:3000
+   ```
+3. Redeploy the backend service
+
+### Step 5: Update Frontend URL in Backend
+
+1. Go to **Render** backend service settings
+2. Update `ALLOWED_ORIGINS` with your final Vercel URL
+3. Redeploy
 
 ## 🔮 Future Improvements
 
-- [ ] User authentication (JWT)
+- [x] User authentication (JWT) ✅
 - [ ] Rich text editor for notes
 - [ ] Dark mode
 - [ ] Note sharing

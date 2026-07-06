@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useNotes } from '../context/NoteContext';
 import { useToast } from '../context/ToastContext';
+import NoteService from '../services/noteService';
 
 export default function CreateNote() {
   const navigate = useNavigate();
@@ -10,11 +11,17 @@ export default function CreateNote() {
   const [formData, setFormData] = useState({ title: '', content: '', tags: '' });
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
+  const [file, setFile] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }));
+  };
+
+  const handleFileChange = (e) => {
+    const selected = e.target.files?.[0];
+    setFile(selected || null);
   };
 
   const handleSubmit = async (e) => {
@@ -29,10 +36,28 @@ export default function CreateNote() {
     try {
       const tags = formData.tags ? formData.tags.split(',').map((t) => t.trim()).filter(Boolean) : [];
       const note = await createNote({ title: formData.title.trim(), content: formData.content.trim(), tags });
-      toast.success('Note created successfully');
+      if (file) {
+          try {
+            await NoteService.uploadAttachment(note.id, file);
+            toast.success('Note created and file uploaded');
+          } catch (uploadErr) {
+            toast.error('Note created, but file upload failed');
+          }
+      } else {
+        toast.success('Note created successfully');
+      }
       navigate(`/notes/${note.id}`);
     } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to create note');
+      const status = err?.response?.status;
+      const data = err?.response?.data;
+      console.error('Create note error - status:', status, 'data:', data, 'message:', err?.message);
+      let msg = 'Failed to create note';
+      if (status === 401) msg = 'Session expired. Please log in again.';
+      else if (status === 403) msg = 'Access denied. Please log in again.';
+      else if (typeof data === 'string') msg = data;
+      else if (data?.message) msg = data.message;
+      else if (err?.message) msg = err.message;
+      toast.error(`${msg} [status=${status}]`);
     } finally {
       setSubmitting(false);
     }
@@ -57,6 +82,10 @@ export default function CreateNote() {
         <div className="form-group">
           <label className="form-label">Tags (comma-separated)</label>
           <input className="form-input" name="tags" value={formData.tags} onChange={handleChange} placeholder="e.g. work, personal, ideas" />
+        </div>
+        <div className="form-group">
+          <label className="form-label">Attachment</label>
+          <input type="file" className="form-input" onChange={handleFileChange} />
         </div>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
           <button type="button" className="btn btn-secondary" onClick={() => navigate(-1)}>Cancel</button>

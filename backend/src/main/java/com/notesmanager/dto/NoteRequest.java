@@ -1,6 +1,5 @@
 package com.notesmanager.dto;
 
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -15,7 +14,7 @@ public class NoteRequest {
     @NotBlank(message = "Content is required")
     private String content;
 
-    @Max(value = 10, message = "Maximum 10 tags allowed")
+    @Size(max = 10, message = "Maximum 10 tags allowed")
     private List<String> tags;
 
     public NoteRequest() {}
