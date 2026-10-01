@@ -3,6 +3,7 @@ import { useNotes } from '../context/NoteContext';
 import NoteCard from '../components/NoteCard';
 import NoteService from '../services/noteService';
 
+// Display pinned notes with pagination
 export default function PinnedNotes() {
   const { loading } = useNotes();
   const [notes, setNotes] = useState([]);
