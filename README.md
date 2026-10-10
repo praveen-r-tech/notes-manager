@@ -245,7 +245,3 @@ docker-compose up --build
 - [ ] Bulk operations
 - [ ] Export notes to PDF
 - [ ] Offline support (PWA)
-
-## 📄 License
-
-MIT License - feel free to use this project for learning, portfolio, or commercial purposes.
