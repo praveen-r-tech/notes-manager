@@ -61,6 +61,7 @@ export default function ViewNote() {
     } catch { toast.error('Failed to delete attachment'); }
   };
 
+  //Date Format
   const formatDate = (d) => new Date(d).toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
   const formatSize = (bytes) => { if (!bytes) return ''; const mb = bytes / (1024 * 1024); return mb >= 1 ? `${mb.toFixed(1)} MB` : `${(bytes / 1024).toFixed(0)} KB`; };
 
